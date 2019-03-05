@@ -20,6 +20,7 @@ def multi_sentence_input(path):
     cp = nltk.RegexpParser(grammar)
     result = cp.parse(tagged)
 
+    # Could possibly be made nicer using map/filter. Iteration works okay, though.
     for tree in cp.parse(result).subtrees():
         if (tree[0][0] == "the"):
             if (tree[1][0] in sum_dict):
