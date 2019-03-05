@@ -1,5 +1,6 @@
 import nltk
 import pprint
+from collections import Counter
 
 
 def single_input():
@@ -13,22 +14,22 @@ def single_input():
 
 
 def multi_sentence_input(path):
-    sum_dict = {}
     text = open(path, 'r').read()
     tagged = nltk.pos_tag(nltk.word_tokenize(text))
-    grammar = "NP: {<DT><NN|NNS|NNP>}"
+    grammar = "NP: {<DT><JJ>?<NN|NNS|NNP>+}"
     cp = nltk.RegexpParser(grammar)
     result = cp.parse(tagged)
 
-    # Could possibly be made nicer using map/filter. Iteration works okay, though.
+    nouns = []
     for tree in cp.parse(result).subtrees():
-        if (tree[0][0] == "the"):
-            if (tree[1][0] in sum_dict):
-                sum_dict[tree[1][0]] = sum_dict[tree[1][0]] + 1
-            else:
-                sum_dict[tree[1][0]] = 1
-    sorted_by_value = sorted(sum_dict.items(), key=lambda kv: kv[1])
+        if (tree[0][0].lower() == "the"):
+            matches = tree[1:]
+            nouns.append(" ".join(list(map(lambda m: m[0], matches))))
 
+    print(f"There are {len(nouns)} definite nouns in the text.")
+    counted = Counter(nouns)
+    print("They are: ")
+    sorted_by_value = sorted(counted.items(), key=lambda kv: kv[1])
     print(sorted_by_value)
 
 
