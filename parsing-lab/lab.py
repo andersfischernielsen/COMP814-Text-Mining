@@ -12,10 +12,9 @@ def single_input():
 
 
 def multi_sentence_input():
-    text = input("Please input some multi sentence text for parsing: ")
-    # TODO: Split long text into sentences, iterate over them and parse individually.
-    # TODO: Extract definite nouns in the text from each sentence.
-    # TODO: Count the definite nouns and output them in a sorted ascending order.
+    path = input("Please input path to text file for parsing: ")
+    text = open(path, 'r')
+    # TODO: Count the definite nouns and output them in a sorted ascending order (by count).
     tagged = nltk.pos_tag(nltk.word_tokenize(text))
     grammar = "NP: {<DT>?<JJ>*<NN>}"
     cp = nltk.RegexpParser(grammar)
