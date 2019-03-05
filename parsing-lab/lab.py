@@ -16,7 +16,7 @@ def multi_sentence_input(path):
     sum_dict = {}
     text = open(path, 'r').read()
     tagged = nltk.pos_tag(nltk.word_tokenize(text))
-    grammar = "NP: {<DT><NN>}"
+    grammar = "NP: {<DT><NN|NNS|NNP>}"
     cp = nltk.RegexpParser(grammar)
     result = cp.parse(tagged)
 
