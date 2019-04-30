@@ -45,11 +45,30 @@ def main():
     #    chnks = get_continuous_chunks(val)
     #    if hasattr(chunk, "label"):
     #        print(chunk)
+
+    results = {"persons":0, "locations":0}
+
     for i, val in enumerate(txt):
         for sent in nltk.sent_tokenize(val):
             for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
-                if hasattr(chunk, 'label') and (chunk.label() == 'PERSON' or chunk.label() == 'GPE'):
+                if hasattr(chunk, 'label') and (chunk.label() == 'PERSON' or chunk.label() == 'GPE'): 
+                    
                     NE = ' '.join(c[0] for c in chunk)
-                    print(f"Found {NE} as {chunk.label()} in sentence no. {i}.")
+
+                    if chunk.label() == 'PERSON':
+                        results["persons"] = results["persons"] + 1
+
+                    if chunk.label() == 'GPE':
+                        results["locations"] = results["locations"] + 1
+
+                    #print(f"Found {NE} as {chunk.label()} in sentence no. {i}.")
+
+    persons = results["persons"]
+    locations = results["locations"]
+    print(f"Found {persons} persons and {locations} locations in the given text.")
+    print(f"Manually 4 persons and 26 were found in the same text.")
+    recall = 0
+    precision = 0
+    print(f"This yields a recall of {recall} and precision of {precision}.")
 
 main()
