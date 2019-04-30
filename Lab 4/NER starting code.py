@@ -65,10 +65,16 @@ def main():
 
     persons = results["persons"]
     locations = results["locations"]
+    actual_persons = 4
+    actual_locations = 26
     print(f"Found {persons} persons and {locations} locations in the given text.")
-    print(f"Manually 4 persons and 26 were found in the same text.")
-    recall = 0
-    precision = 0
-    print(f"This yields a recall of {recall} and precision of {precision}.")
+    print(f"Manually {actual_persons} persons and {actual_locations} were found in the same text.")
+    
+    #persons_recall = actual_persons/persons
+    #locations_recall = actual_locations/locations
+    #persons_precision = actual_persons/persons
+    #locations_precision = actual_locations/locations
+    #print(f"For PERSONS this yields a recall of {persons_recall} and precision of {persons_precision}.")
+    #print(f"For LOCATIONS this yields a recall of {locations_recall} and precision of {locations_precision}.")
 
 main()
