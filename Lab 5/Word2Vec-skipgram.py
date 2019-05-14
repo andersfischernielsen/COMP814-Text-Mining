@@ -1,3 +1,7 @@
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+import tensorflow as tf
+import pandas as pd
 corpus = ['king is a strong man',
           'queen is a wise woman',
           'boy is a young man',
@@ -55,9 +59,6 @@ for sentence in sentences:
 for text in corpus:
     print(text)
 
-import pandas as pd
-
-
 
 df = pd.DataFrame(data, columns=['input', 'label'])
 # print(df)
@@ -65,24 +66,25 @@ df = pd.DataFrame(data, columns=['input', 'label'])
 # print(word2int)
 
 
-#Define the tensor flow graph. That is define the NN
-import tensorflow as tf
-import numpy as np
+# Define the tensor flow graph. That is define the NN
 
 ONE_HOT_DIM = len(words)
 
 # function to convert numbers to one hot vectors
+
+
 def to_one_hot_encoding(data_point_index):
     one_hot_encoding = np.zeros(ONE_HOT_DIM)
     one_hot_encoding[data_point_index] = 1
     return one_hot_encoding
 
-X = [] # input word
-Y = [] # target word
+
+X = []  # input word
+Y = []  # target word
 
 for x, y in zip(df['input'], df['label']):
-    X.append(to_one_hot_encoding(word2int[ x ]))
-    Y.append(to_one_hot_encoding(word2int[ y ]))
+    X.append(to_one_hot_encoding(word2int[x]))
+    Y.append(to_one_hot_encoding(word2int[y]))
 
 # convert them to numpy arrays
 X_train = np.asarray(X)
@@ -97,13 +99,13 @@ EMBEDDING_DIM = 2
 
 # hidden layer: which represents word vector eventually
 W1 = tf.Variable(tf.random_normal([ONE_HOT_DIM, EMBEDDING_DIM]))
-b1 = tf.Variable(tf.random_normal([1])) #bias
-hidden_layer = tf.add(tf.matmul(x,W1), b1)
+b1 = tf.Variable(tf.random_normal([1]))  # bias
+hidden_layer = tf.add(tf.matmul(x, W1), b1)
 
 # output layer
 W2 = tf.Variable(tf.random_normal([EMBEDDING_DIM, ONE_HOT_DIM]))
 b2 = tf.Variable(tf.random_normal([1]))
-prediction = tf.nn.softmax(tf.add( tf.matmul(hidden_layer, W2), b2))
+prediction = tf.nn.softmax(tf.add(tf.matmul(hidden_layer, W2), b2))
 
 # loss function: cross entropy
 loss = tf.reduce_mean(-tf.reduce_sum(y_label * tf.log(prediction), axis=[1]))
@@ -111,7 +113,7 @@ loss = tf.reduce_mean(-tf.reduce_sum(y_label * tf.log(prediction), axis=[1]))
 # training operation
 train_op = tf.train.GradientDescentOptimizer(0.05).minimize(loss)
 
-#Train the NN
+# Train the NN
 sess = tf.Session()
 init = tf.global_variables_initializer()
 sess.run(init)
@@ -122,63 +124,31 @@ for i in range(iteration):
     # label is Y_train which is one hot encoded neighbor word
     sess.run(train_op, feed_dict={x: X_train, y_label: Y_train})
     if i % 3000 == 0:
-        print('iteration '+str(i)+' loss is : ', sess.run(loss, feed_dict={x: X_train, y_label: Y_train}))
+        print('iteration '+str(i)+' loss is : ',
+              sess.run(loss, feed_dict={x: X_train, y_label: Y_train}))
 
 
 # Now the hidden layer (W1 + b1) is actually the word look up table
 vectors = sess.run(W1 + b1)
-#print(vectors)
+# print(vectors)
 
-#Print the word vector in a table
-w2v_df = pd.DataFrame(vectors, columns = ['x1', 'x2'])
+# Print the word vector in a table
+w2v_df = pd.DataFrame(vectors, columns=['x1', 'x2'])
 w2v_df['word'] = words
 w2v_df = w2v_df[['word', 'x1', 'x2']]
 print(w2v_df)
 
 # Calculate distances between words
-from sklearn.metrics.pairwise import cosine_similarity
-
 distances = cosine_similarity(vectors)
-distances = pd.DataFrame(distances, columns = words, index = words)
+distances = pd.DataFrame(distances, columns=words, index=words)
 print(distances)
 
 # Find 2 closest words
-
-vals = distances._get_values
-print(vals)
-
-#sorted_distances = distances.sort_values(by=[words], ascending = False)
-#print(sorted_distances)
-#for index, row in distances.iterrows():
-    #    l = row.sort_values(by=[words], ascending = False)
-        #l = row.sort_values(row.axes, ascending = False)
-        #l = list(row)
-        #l.sort(reverse = True)
-     #   l = l[1:3] # Take the two closest words, not including itself
-
-       # print (f"{index} : {l}")
-       # for x in l:
-       #         print (f"{index} : {distances[index][x]}")
-                
-        
-
-
-#Now print the word vector as a 2d chart
-# import matplotlib.pyplot as plt
-#
-# fig, ax = plt.subplots()
-#
-# for word, x1, x2 in zip(w2v_df['word'], w2v_df['x1'], w2v_df['x2']):
-#     ax.annotate(word, (x1, x2))
-#
-# PADDING = 1.0
-# x_axis_min = np.amin(vectors, axis=0)[0] - PADDING
-# y_axis_min = np.amin(vectors, axis=0)[1] - PADDING
-# x_axis_max = np.amax(vectors, axis=0)[0] + PADDING
-# y_axis_max = np.amax(vectors, axis=0)[1] + PADDING
-#
-# plt.xlim(x_axis_min, x_axis_max)
-# plt.ylim(y_axis_min, y_axis_max)
-# plt.rcParams["figure.figsize"] = (10, 10)
-#
-# plt.show()
+rows = distances.iterrows()
+for r in rows:
+    v = r[1].values
+    tuples = zip(words, v)
+    sorted_by_second = sorted(tuples, reverse=True, key=lambda t: t[1])[1:3]
+    print(f"Found two closes word to '{r[0]}' to be:")
+    for s in sorted_by_second:
+        print(f"   '{s[0]}' with distance {s[1]}")
