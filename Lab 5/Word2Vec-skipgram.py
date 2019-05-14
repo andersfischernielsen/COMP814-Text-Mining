@@ -51,7 +51,7 @@ for sentence in sentences:
             if neighbor != word:
                 data.append([word, neighbor])
 
-# Now create an input and a output label as reqired for a machine learning algorithm.
+# Now create an input and a output label as required for a machine learning algorithm.
 for text in corpus:
     print(text)
 
@@ -65,7 +65,7 @@ df = pd.DataFrame(data, columns=['input', 'label'])
 # print(word2int)
 
 
-#Deinfine the tensor flow graph. That is define the NN
+#Define the tensor flow graph. That is define the NN
 import tensorflow as tf
 import numpy as np
 
@@ -134,6 +134,34 @@ w2v_df = pd.DataFrame(vectors, columns = ['x1', 'x2'])
 w2v_df['word'] = words
 w2v_df = w2v_df[['word', 'x1', 'x2']]
 print(w2v_df)
+
+# Calculate distances between words
+from sklearn.metrics.pairwise import cosine_similarity
+
+distances = cosine_similarity(vectors)
+distances = pd.DataFrame(distances, columns = words, index = words)
+print(distances)
+
+# Find 2 closest words
+
+vals = distances._get_values
+print(vals)
+
+#sorted_distances = distances.sort_values(by=[words], ascending = False)
+#print(sorted_distances)
+#for index, row in distances.iterrows():
+    #    l = row.sort_values(by=[words], ascending = False)
+        #l = row.sort_values(row.axes, ascending = False)
+        #l = list(row)
+        #l.sort(reverse = True)
+     #   l = l[1:3] # Take the two closest words, not including itself
+
+       # print (f"{index} : {l}")
+       # for x in l:
+       #         print (f"{index} : {distances[index][x]}")
+                
+        
+
 
 #Now print the word vector as a 2d chart
 # import matplotlib.pyplot as plt
