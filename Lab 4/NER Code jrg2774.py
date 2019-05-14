@@ -3,7 +3,6 @@ from nltk.tree import Tree
 import nltk
 import re
 
-
 def read_file():
     file = open("data/data1.txt","r")
     data = file.read()
@@ -15,7 +14,7 @@ def get_continuous_chunks(text):
     prev = None
     continuous_chunk = []
     current_chunk = []
-    #print(chunked)
+
     for i in chunked:
         if type(i) == Tree:
             current_chunk.append(" ".join([token for token, pos in i.leaves()]))
@@ -39,12 +38,7 @@ def get_continuous_chunks(text):
 
 def main():
     txt = read_file()
-    #txt = re.split("\n|\\.", txt)
     txt = txt.split("\n")
-    #for i, val in enumerate(txt):
-    #    chnks = get_continuous_chunks(val)
-    #    if hasattr(chunk, "label"):
-    #        print(chunk)
 
     results = {"persons":0, "locations":0}
 
@@ -52,7 +46,6 @@ def main():
         for sent in nltk.sent_tokenize(val):
             for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
                 if hasattr(chunk, 'label') and (chunk.label() == 'PERSON' or chunk.label() == 'GPE'): 
-                    
                     NE = ' '.join(c[0] for c in chunk)
 
                     if chunk.label() == 'PERSON':
@@ -72,8 +65,8 @@ def main():
     
     #persons_recall = actual_persons/persons
     #locations_recall = actual_locations/locations
-    #persons_precision = actual_persons/persons
-    #locations_precision = actual_locations/locations
+    #persons_precision = ???
+    #locations_precision = ???
     #print(f"For PERSONS this yields a recall of {persons_recall} and precision of {persons_precision}.")
     #print(f"For LOCATIONS this yields a recall of {locations_recall} and precision of {locations_precision}.")
 
