@@ -149,6 +149,6 @@ for r in rows:
     v = r[1].values
     tuples = zip(words, v)
     sorted_by_second = sorted(tuples, reverse=True, key=lambda t: t[1])[1:3]
-    print(f"Found two closes word to '{r[0]}' to be:")
+    print(f"Found two closest word to '{r[0]}' to be:")
     for s in sorted_by_second:
         print(f"   '{s[0]}' with distance {s[1]}")
